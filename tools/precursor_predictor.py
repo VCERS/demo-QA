@@ -8,8 +8,8 @@ from reaction_path import PrecursorsRecommendation
 
 def load_precursor_predictor():
   class ExampleOutput(BaseModel):
-    target_formula: str
-    precursors_predicts: list
+    target_formula: str = Field(description = "the input chemical expressin")
+    precursors_predicts: list = Field(description = "precursor combinations each of which is saved in a tuple in the list")
 
   class PrecursorPredictorInput(BaseModel):
     query: str = Field(description = "chemical expression of a compund")
