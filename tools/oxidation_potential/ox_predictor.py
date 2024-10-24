@@ -4,7 +4,7 @@ from os.path import join
 from rdkit import Chem
 import torch
 from torch import load
-from torch.nn.functional as F
+import torch.nn.functional as F
 from torch_geometric.data import Data, Batch
 from .models import Predictor
 
