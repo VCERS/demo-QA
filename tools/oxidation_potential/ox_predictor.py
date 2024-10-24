@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from os.path import join
+from os.path import join, abspath, dirname
 from rdkit import Chem
 import torch
 from torch import load
@@ -12,7 +12,9 @@ class OxPredictor(object):
   def __init__(self, device = 'cpu'):
     assert device in {'cpu', 'cuda'}
     self.predictor = Predictor()
-    ckpt = load(join('ckpt', 'model.pth'))
+    script_path = abspath(__file__)
+    script_dir = dirname(script_path)
+    ckpt = load(join(script_dir, 'ckpt', 'model.pth'))
     self.predictor.load_state_dict(ckpt['state_dict'])
     self.predictor.eval().to(device)
     self.device = device
