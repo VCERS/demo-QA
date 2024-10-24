@@ -37,6 +37,7 @@ class OxPredictor(object):
     edge_type = F.one_hot(torch.tensor(edges_type, dtype = torch.long),22).to(torch.float32) # edge_type.shape = (edge_num)
     data = Data(x = x, edge_index = edge_index, edge_type = edge_type)
     batch = Batch.from_data_list([data])
+    return batch
   def predict(self, smiles: str):
     batch = self.prepare_input(smiles).to(self.device)
     ox = self.predictor(batch).detach().cpu().numpy() # ox.shape = (1,1)
