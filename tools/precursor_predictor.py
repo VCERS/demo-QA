@@ -7,6 +7,10 @@ from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, Callback
 from reaction_path import PrecursorsRecommendation
 
 def load_precursor_predictor():
+  class ExampleOutput(BaseModel):
+    target_formula: str
+    precursors_predicts: list
+
   class PrecursorPredictorInput(BaseModel):
     query: str = Field(description = "chemical expression of a compund")
     n: int = Field(description = "how many precursor combinations are returned. if not specified just use value 1.")
@@ -16,16 +20,15 @@ def load_precursor_predictor():
       arbitrary_types_allowed = True
     recommend: PrecursorsRecommendation
 
-  class PrecursorPredictorTool(BaseTool):
+  class PrecursorPredictorTool(StructuredTool):
     name: str = "precursor predictor"
     description: str = "predict multiple possible precursor combinations of a compound"
     args_schema: Type[BaseModel] = PrecursorPredictorInput
-    return_direct: bool = True
     config: PrecursorPredictorConfig
     def _run(self, query:str, n: int, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
       target_formula = [query]
       all_predicts = recommend.call(target_formula = target_formula, top_n = n)
-      return str(all_predicts[0]['precursors_predicts'])
+      return ExampleOutput(**all_predicts[0])
 
   recommend = PrecursorsRecommendation()
   return PrecursorPredictorTool(config = PrecursorPredictorConfig(
