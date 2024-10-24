@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, Type, List, Dict, Union, Any
 from langchain.tools import BaseTool, StructuredTool, Tool, tool
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from reaction_path import PrecursorsRecommendation
+from .reaction_path import PrecursorsRecommendation
 
 def load_precursor_predictor():
   class ExampleOutput(BaseModel):

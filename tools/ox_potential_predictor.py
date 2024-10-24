@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, Type, List, Dict, Union, Any
 from langchain.tools import BaseTool, StructuredTool, Tool, tool
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from oxidation_potential import OxPredictor
+from .oxidation_potential import OxPredictor
 
 def load_ox_potential_predictor():
   class ExampleOutput(BaseModel):
