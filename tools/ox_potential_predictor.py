@@ -34,5 +34,5 @@ def load_ox_potential_predictor():
 
 if __name__ == "__main__":
   tool = load_ox_potential_predictor()
-  res = tool.invoke({'smiles': 'CCC(C#N)CC'})
+  res = tool.invoke({'smiles': 'CCNCCNCCNCCNCCNCCNCC'})
   print(res)
