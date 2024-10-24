@@ -8,7 +8,7 @@ from oxidation_potential import OxPredictor
 
 def load_ox_potential_predictor():
   class ExampleOutput(BaseModel):
-    oxidation_potential: str = Field(description = "oxidation potential prediction")  
+    oxidation_potential: float = Field(description = "oxidation potential prediction")  
 
   class OxPotentialPredictorInput(BaseModel):
     smiles: str = Field(description = "SMILES of a molecule")
