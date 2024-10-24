@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from pydantic import BaseModel, Field
-from reaction_path import PrecursorsRecommendation
+from .reaction_path import PrecursorsRecommendation
 
 def load_precursor_predictor():
   class PrecursorPredictorInput(BaseModel):
@@ -23,4 +23,9 @@ def load_precursor_predictor():
       target_formula = [query]
       all_predicts = recommend.call(target_formula = target_formula, top_n = n)
       return str(all_predicts[0]['precursors_predicts'])
+
+  recommend = PrecursorsRecommendation()
+  return PrecursorPredictorTool(config = PrecursorPredictorConfig(
+    recommend = recommend
+  ))
 
