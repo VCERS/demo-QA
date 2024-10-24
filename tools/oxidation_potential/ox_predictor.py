@@ -14,9 +14,9 @@ class OxPredictor(object):
     self.predictor = Predictor()
     script_path = abspath(__file__)
     script_dir = dirname(script_path)
-    ckpt = load(join(script_dir, 'ckpt', 'model.pth'), map_location = torch.device('cpu'))
+    ckpt = load(join(script_dir, 'ckpt', 'model.pth'), map_location = torch.device('cpu'))['state_dict']
     ckpt = {(k if not k.startswith('module.') else k.replace('module.','')): v for k, v in ckpt.items()}
-    self.predictor.load_state_dict(ckpt['state_dict'])
+    self.predictor.load_state_dict(ckpt)
     self.predictor.eval().to(device)
     self.device = device
   def prepare_input(self, smiles: str):
