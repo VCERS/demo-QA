@@ -14,7 +14,7 @@ class OxPredictor(object):
     self.predictor = Predictor()
     script_path = abspath(__file__)
     script_dir = dirname(script_path)
-    ckpt = load(join(script_dir, 'ckpt', 'model.pth'))
+    ckpt = load(join(script_dir, 'ckpt', 'model.pth'), map_location = torch.device('cpu'))
     self.predictor.load_state_dict(ckpt['state_dict'])
     self.predictor.eval().to(device)
     self.device = device
