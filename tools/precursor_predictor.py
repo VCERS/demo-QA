@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 from pydantic import BaseModel, Field
-from .reaction_path import PrecursorsRecommendation
+from typing import Optional, Type, List, Dict, Union, Any
+from langchain.tools import BaseTool, StructuredTool, Tool, tool
+from reaction_path import PrecursorsRecommendation
 
 def load_precursor_predictor():
   class PrecursorPredictorInput(BaseModel):
@@ -29,3 +31,7 @@ def load_precursor_predictor():
     recommend = recommend
   ))
 
+if __name__ == "__main__":
+  tool = load_precursor_predictor()
+  res = tool.invoke({'query': 'BaYSi2O5N','n': 10})
+  print(res)
