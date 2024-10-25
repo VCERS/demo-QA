@@ -18,7 +18,7 @@ def chatbot_response(user_input, history):
     return history, history
 
 def create_interface():
-    with gr.Blocks() as demo:
+  with gr.Blocks() as demo:
     if "history" not in gr.SessionState:
       gr.SessionState['history'] = []
     with gr.Row(equal_height = True):
@@ -35,7 +35,7 @@ def create_interface():
       submit_btn.click(chatbot_response,
                        inputs = [user_input, gr.SessionState['history']],
                        outputs = [chatbot, gr.SessionState['history']])
-    return demo
+  return demo
 
 def main(unused_argv):
   agent = Agent(model = FLAGS.model)
