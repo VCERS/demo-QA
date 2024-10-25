@@ -23,7 +23,7 @@ def main(unused_argv):
       gr.SessionState['history'] = []
     with gr.Row(equal_height = True):
       with gr.Column(scale = 15):
-        gr.Markdown("<h1><center>LLM Agent</center></h1>")
+        gr.Markdown("<h1><center>Electrolyte Agent</center></h1>")
     with gr.Row():
       with gr.Column(scale = 4):
         chatbot = gr.Chatbot(height = 450, show_copy_button = True)
@@ -32,9 +32,12 @@ def main(unused_argv):
           submit_btn = gr.Button("发送")
         with gr.Row():
           clear_btn = gr.ClearButton(components = [chatbot], value = "清空问题")
-      submit_btn.click(chatbot_response, inputs = [user_input, gr.SessionState['history']], outputs = [chatbot, gr.SessionState['history']])
+      submit_btn.click(chatbot_response,
+                       inputs = [user_input, gr.SessionState['history']],
+                       outputs = [chatbot, gr.SessionState['history']])
   gr.close_all()
-  demo.launch(server_name = config.service_host, server_port = config.service_port)
+  demo.launch(server_name = config.service_host,
+              server_port = config.service_port)
 
 if __name__ == "__main__":
   add_options()
