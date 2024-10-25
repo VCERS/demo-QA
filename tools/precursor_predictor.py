@@ -25,7 +25,7 @@ def load_precursor_predictor():
     description: str = "predict multiple possible precursor combinations of a compound"
     args_schema: Type[BaseModel] = PrecursorPredictorInput
     config: PrecursorPredictorConfig
-    def _run(self, query:str, n: int = 1, run_manager: Optional[CallbackManagerForToolRun] = None) -> ExampleOutput:
+    def _run(self, query:str, n: Optional[int] = 1, run_manager: Optional[CallbackManagerForToolRun] = None) -> ExampleOutput:
       target_formula = [query]
       all_predicts = self.config.recommend.call(target_formula = target_formula, top_n = n)
       return ExampleOutput(**all_predicts[0])
