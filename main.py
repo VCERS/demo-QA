@@ -11,14 +11,14 @@ FLAGS = flags.FLAGS
 def add_options():
   flags.DEFINE_enum('model', default = 'qwen2', enum_values = {'llama3', 'qwen2'}, help = 'model to use')
 
-def main(unused_argv):
-  agent = Agent(model = FLAGS.model)
-  def chatbot_response(user_input, history):
+def chatbot_response(user_input, history):
     history.append(('User', user_input))
     response = agent.query(user_input)
     history.append(('Chatbot', response['output']))
     return history, history
-  with gr.Blocks() as demo:
+
+def create_interface():
+    with gr.Blocks() as demo:
     if "history" not in gr.SessionState:
       gr.SessionState['history'] = []
     with gr.Row(equal_height = True):
@@ -35,7 +35,11 @@ def main(unused_argv):
       submit_btn.click(chatbot_response,
                        inputs = [user_input, gr.SessionState['history']],
                        outputs = [chatbot, gr.SessionState['history']])
-  gr.close_all()
+    return demo
+
+def main(unused_argv):
+  agent = Agent(model = FLAGS.model)
+  demo = create_interafce()
   demo.launch(server_name = config.service_host,
               server_port = config.service_port)
 
