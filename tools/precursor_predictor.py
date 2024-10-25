@@ -12,7 +12,7 @@ def load_precursor_predictor():
     precursors_predicts: list = Field(description = "precursor combinations each of which is saved in a tuple in the list")
 
   class PrecursorPredictorInput(BaseModel):
-    query: str = Field(description = "chemical expression of a compund")
+    query: str = Field(description = "chemical expression of a compound")
     n: int = Field(description = "how many precursor combinations are returned. if not specified just use value 1.")
 
   class PrecursorPredictorConfig(BaseModel):
