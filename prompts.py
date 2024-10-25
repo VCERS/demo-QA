@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+from langchain import hub
+
 def agent_template(tokenizer, tools):
   prompt = hub.pull('hwchase17/react-json')
   system_template = prompt[0].prompt.template
