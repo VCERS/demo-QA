@@ -12,7 +12,7 @@ class SynthesisSteps(object):
     predict = self.recommend.call(target_formula = [query], top_n = n)[0]
     precursors_predicts = predict['precursors_predicts']
     results = list()
-    for idx, precursors in enumerate(precursor_sets):
+    for idx, precursors in enumerate(precursor_predicts):
       steps = chain.invoke({'precursors': ','.join(precursors), 'target': query})
       results.append(steps)
     return results
