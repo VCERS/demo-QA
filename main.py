@@ -19,8 +19,7 @@ def chatbot_response(user_input, history):
 
 def create_interface():
   with gr.Blocks() as demo:
-    if "history" not in gr.SessionState:
-      gr.SessionState['history'] = []
+    state = gr.State([])
     with gr.Row(equal_height = True):
       with gr.Column(scale = 15):
         gr.Markdown("<h1><center>Electrolyte Agent</center></h1>")
@@ -33,8 +32,8 @@ def create_interface():
         with gr.Row():
           clear_btn = gr.ClearButton(components = [chatbot], value = "清空问题")
       submit_btn.click(chatbot_response,
-                       inputs = [user_input, gr.SessionState['history']],
-                       outputs = [chatbot, gr.SessionState['history']])
+                       inputs = [user_input, state],
+                       outputs = [chatbot, state])
   return demo
 
 def main(unused_argv):
