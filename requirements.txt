@@ -1,6 +1,7 @@
 torch
 torchtext
 torchvision
+torch-geometric
 langchain
 langchain-core
 langchain-community
