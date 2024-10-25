@@ -15,7 +15,7 @@ def load_synthesis_steps_predictor(tokenizer, llm):
 
   class SynthesisStepsPredictorInput(BaseModel):
     query: str = Field(description = "chemical expression of a compound")
-    n: int = Field(description = "how many procedures are returned. if not specified just use value 1.")
+    n: int = Field(1, description = "how many procedures are returned. it is optional with default value 1.")
 
   class SynthesisStepsPredictorConfig(BaseModel):
     class Config:
