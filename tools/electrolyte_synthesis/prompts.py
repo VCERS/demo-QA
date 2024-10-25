@@ -25,7 +25,6 @@ def exp_instruction_prompt(tokenizer):
         "向容器c1添加0.360g前体物质Li3PO4。",
         "向容器c1添加0.085g前体物质LiCl。",
         "采用planetary ball mill对容器c1内的样本进行研磨，研磨转速为370rpm，研磨时间为90000秒。",
-        "采用X-ray diffraction(XRD)设备对容器c1内的样品进行检测，结果2θ应该在26.8°,30.0°,34.6°产生峰值。",
         "准备Tammann tube类型，PT2型号的容器c2。",
         "在argon环境的Glove Box中将容器c1中的物质转移1.5g到容器c2中。",
         "在argon环境的Glove Box中对容器c2采用quartz wool封闭。",
@@ -97,8 +96,6 @@ def exp_instruction_prompt(tokenizer):
         "从容器c1转移样本到容器c2。",
         "对容器c2通过沉淀方法，去除supernatant solvent。",
         "对容器c2加热到100C，并通过vacuum pump进行干燥。",
-        "采用X-ray diffraction(XRD)设备对容器c2内的样品进行检测，结果应该在Li2S,P2S5,LiBr,LiI物质对应位置产生峰值。",
-        "采用inductively coupled plasma spectrometer(ICP)设备对容器c2内的样本进行检测，结果需要显示Li:N:Cl元素按照单位mol计算的比例应该为6.0:0.3:0.7。",
         "在argon环境的Glove Box中对容器c2进行加热，从室温到目标温度为188C，在目标温度需要维持10800秒。"
       ]
     }
