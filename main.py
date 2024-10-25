@@ -17,7 +17,7 @@ def main(unused_argv):
     history.append(('User', user_input))
     response = agent.query(user_input)
     history.append(('Chatbot', response['output']))
-    return "", history
+    return history, history
   with gr.Blocks() as demo:
     if "history" not in gr.SessionState:
       gr.SessionState['history'] = []
