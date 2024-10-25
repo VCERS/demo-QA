@@ -39,7 +39,7 @@ def create_interface():
 
 def main(unused_argv):
   agent = Agent(model = FLAGS.model)
-  demo = create_interafce()
+  demo = create_interface()
   demo.launch(server_name = config.service_host,
               server_port = config.service_port)
 
