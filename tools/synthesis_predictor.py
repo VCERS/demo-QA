@@ -29,7 +29,7 @@ def load_synthesis_steps_predictor(tokenizer, llm):
     config: SynthesisStepsPredictorConfig
     def _run(self, query: str, n: Optional[int] = 1, run_manager: Optional[CallbackManagerForToolRun] = None) -> ExampleOutput:
       procedures = self.config.predictor.predict(query, n)
-      return ExampleOutput(synthesis_procedures = procedures)
+      return ExampleOutput(synthesis_procedures = [SynthesisProcedure(steps = procedure) for procedure in procedures])
 
   predictor = SynthesisSteps(tokenizer, llm)
   return SynthesisStepsPredictorTool(config = SynthesisStepsPredictorConfig(
