@@ -27,7 +27,7 @@ def load_synthesis_steps_predictor(tokenizer, llm):
     description: str = "predict multiple possible procedures of an electrolyte synthesis"
     args_schema: Type[BaseModel] = SynthesisStepsPredictorInput
     config: SynthesisStepsPredictorConfig
-    def _run(self, query: str, n: int, run_manager: Optional[CallbackManagerForToolRun] = None) -> ExampleOutput:
+    def _run(self, query: str, n: int = 1, run_manager: Optional[CallbackManagerForToolRun] = None) -> ExampleOutput:
       procedures = self.config.predictor.predict(query, n)
       return ExampleOutput(synthesis_procedures = procedures)
 
