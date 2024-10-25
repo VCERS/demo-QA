@@ -14,9 +14,8 @@ def add_options():
 def create_interface():
   agent = Agent(model = FLAGS.model)
   def chatbot_response(user_input, history):
-    history.append(('User', user_input))
     response = agent.query(user_input)
-    history.append(('Chatbot', response['output']))
+    history.append((user_input, response['output']))
     return history, history
   with gr.Blocks() as demo:
     state = gr.State([])
