@@ -13,9 +13,10 @@ def add_options():
 
 def main(unused_argv):
   agent = Agent(model = FLAGS.model)
-  def query(question, history):
-    answer = agent.query(question)
-    history.append((question, answer['output']))
+  def chatbot_response(user_input, history):
+    history.append(('User', user_input))
+    response = agent.query(user_input)
+    history.append(('Chatbot', response['output']))
     return "", history
   with gr.Blocks() as demo:
     if "history" not in gr.SessionState:
@@ -31,7 +32,7 @@ def main(unused_argv):
           submit_btn = gr.Button("发送")
         with gr.Row():
           clear_btn = gr.ClearButton(components = [chatbot], value = "清空问题")
-      submit_btn.click(query, inputs = [user_input, gr.SessionState['history']], outputs = [chatbot, gr.SessionState['history']])
+      submit_btn.click(chatbot_response, inputs = [user_input, gr.SessionState['history']], outputs = [chatbot, gr.SessionState['history']])
   gr.close_all()
   demo.launch(server_name = config.service_host, server_port = config.service_port)
 
