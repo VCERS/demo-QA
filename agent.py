@@ -25,7 +25,7 @@ class Agent(object):
     llm = llm.bind(stop = ["<|eot_id|>"])
     chain = {"input": lambda x: x["input"], "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"])} | prompt | llm | ReActJsonSingleInputOutputParser()
     memory = ConversationBufferMemory(memory_key="chat_history")
-    self.agent_chain = AgentExecutor(agent = chain, tools = tools, memory = memory, verbose = True)
+    self.agent_chain = AgentExecutor(agent = chain, tools = tools, memory = memory, verbose = True, handle_parsing_errors=True)
   def query(self, question):
     return self.agent_chain.invoke({"input": question})
 
