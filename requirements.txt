@@ -8,6 +8,7 @@ langchain-community
 langchain-openai
 langchain-cli
 langchainhub
+langgraph
 transformers
 numexpr
 google-search-results
