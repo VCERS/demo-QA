@@ -1,19 +1,42 @@
 #!/usr/bin/python3
 
 from langchain import hub
+from typing import Any, Union
+from transformers import AutoTokenizer
 from langchain.tools.render import render_text_description
-from langchain_core.prompts.prompt import PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from langchain_core.prompt_values import ChatPromptValue, PromptValue
 
-def agent_template(tokenizer, tools):
+# NOTE: langchain-core >= 0.3.15
+
+class HFChatPromptValue(ChatPromptValue):
+  tokenizer: Any = None
+  def to_string(self) -> str:
+    hf_messages = []
+    for m in self.messages:
+      if isinstance(m, HumanMessage):
+        role = 'user'
+      elif isinstance(m, AIMessage):
+        role = 'assistant'
+      elif isinstance(m, SystemMessage):
+        role = 'system'
+      else:
+        raise Exception(f'Got unsupported message type: {m}')
+      hf_messages.append({'role': role, 'content': m.content})
+    return self.tokenizer.apply_chat_template(hf_messages, tokenize = False, add_generation_prompt = True)
+
+class HFChatPromptTemplate(ChatPromptTemplate):
+  tokenizer: Any = None
+  def format_prompt(self, **kwargs: Any) -> PromptValue:
+    messages = self.format_messages(**kwargs)
+    return HFChatPromptValue(messages = messages, tokenizer = self.tokenizer)
+  async def aformat_prompt(self, **kwargs: Any) -> PromptValue:
+    messages = await self.format_messages(**kwargs)
+    return HFChatPromptValue(messages = messages, tokenizer = self.tokenizer)
+
+def agent_template(tokenizer):
   prompt = hub.pull('hwchase17/react-json')
-  system_template = prompt[0].prompt.template
-  system_template = system_template.replace('{tools}', render_text_description(tools))
-  system_template = system_template.replace('{tool_names}', ", ".join([t.name for t in tools]))
-  user_template = prompt[1].prompt.template
-  messages = [
-    {'role': 'system', 'content': system_template},
-    {'role': 'user', 'content': user_template}
-  ]
-  prompt = tokenizer.apply_chat_template(messages, tokenize = False, add_generation_prompt = True)
-  template = PromptTemplate(template = prompt, input_variables = ['agent_scratchpad', 'input'])
-  return template
+  prompt = HFChatPromptTemplate(prompt.messages, tokenizer = tokenizer)
+  return prompt
+
