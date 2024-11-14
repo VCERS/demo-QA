@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from os import environ
+from transformers import AutoTokenizer
 from langchain.memory import ConversationBufferMemory
 from langchain.agents import AgentExecutor, load_tools
 from langchain.agents.format_scratchpad import format_log_to_str
