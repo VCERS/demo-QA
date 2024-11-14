@@ -21,12 +21,14 @@ class Agent(object):
              load_ox_potential_predictor(),
              load_synthesis_steps_predictor(tokenizer, llm)]
     prompt = agent_template(tokenizer)
+    prompt.partial_variables = {
+      "tools": render_text_description(tools), 
+      "tool_names": ", ".join([t.name for t in tools])
+    }
     llm = llm.bind(stop = ["<|eot_id|>"])
     chain = {
       "input": lambda x: x["input"],
-      "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"]),
-      "tools": render_text_description(tools),
-      "tool_names": ", ".join([t.name for t in tools])
+      "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"])
     } | prompt | llm | ReActJsonSingleInputOutputParser()
     memory = ConversationBufferMemory(memory_key="chat_history")
     self.agent_chain = AgentExecutor(agent = chain, tools = tools, memory = memory, verbose = True, handle_parsing_errors=True)
