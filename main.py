@@ -12,7 +12,7 @@ def add_options():
   flags.DEFINE_string('host', default = 'http://localhost:8080/generate', help = 'url to TGI')
 
 def create_interface():
-  agent = Agent(model = FLAGS.host)
+  agent = Agent(host = FLAGS.host)
   def chatbot_response(user_input, history):
     response = agent.query(user_input)
     history.append((user_input, response['output']))
