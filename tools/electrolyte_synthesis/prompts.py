@@ -1,10 +1,35 @@
 #!/usr/bin/python3
 
-from langchain import hub
-from langchain_core.output_parsers import JsonOutputParser
-from langchain_core.pydantic_v1 import BaseModel, Field, create_model
-from langchain.tools.render import render_text_description
-from langchain_core.prompts.prompt import PromptTemplate
+from typing import Any, Union
+from transformers import AutoTokenizer
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from langchain_core.prompt_values import ChatPromptValue, PromptValue
+
+class HFChatPromptValue(ChatPromptValue):
+  tokenizer: Any = None
+  def to_string(self) -> str:
+    hf_messages = []
+    for m in self.messages:
+      if isinstance(m, HumanMessage):
+        role = 'user'
+      elif isinstance(m, AIMessage):
+        role = 'assistant'
+      elif isinstance(m, SystemMessage):
+        role = 'system'
+      else:
+        raise Exception(f'Got unsupported message type: {m}')
+      hf_messages.append({'role': role, 'content': m.content})
+    return self.tokenizer.apply_chat_template(hf_messages, tokenize = False, add_generation_prompt = True)
+
+class HFChatPromptTemplate(ChatPromptTemplate):
+  tokenizer: Any = None
+  def format_prompt(self, **kwargs: Any) -> PromptValue:
+    messages = self.format_messages(**kwargs)
+    return HFChatPromptValue(messages = messages, tokenizer = self.tokenizer)
+  async def aformat_prompt(self, **kwargs: Any) -> PromptValue:
+    messages = await self.format_messages(**kwargs)
+    return HFChatPromptValue(messages = messages, tokenizer = self.tokenizer)
 
 def exp_instruction_prompt(tokenizer):
   class UnstructuredSteps(BaseModel):
@@ -115,10 +140,8 @@ Below are a number of examples of given precursors, target electrolyte and their
 
 precursors: {precursors}
 target: {target}""" % instructions
-  messages = [
-    {'role': 'system', 'content': system_prompts},
-    {'role': 'user', 'content': human_prompts}
-  ]
-  prompt = tokenizer.apply_chat_template(messages, tokenize = False, add_generation_prompt = True)
-  template = PromptTemplate(template = prompt, input_variables = ['precursors', 'target'])
+  template = HFChatPromptTemplate([
+    ('system', system_prompts),
+    ('user', human_prompts)
+  ], tokenizer = tokenizer)
   return template, parser
