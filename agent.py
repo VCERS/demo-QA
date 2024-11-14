@@ -24,7 +24,7 @@ class Agent(object):
     prompt = prompt.partial(
       tools = render_text_description(tools), 
       tool_names = ", ".join([t.name for t in tools])
-    }
+    )
     llm = llm.bind(stop = ["<|eot_id|>"])
     chain = {
       "input": lambda x: x["input"],
