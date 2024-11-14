@@ -14,7 +14,7 @@ class SynthesisSteps(object):
     results = list()
     for idx, precursors in enumerate(precursors_predicts):
       steps = self.chain.invoke({'precursors': ','.join(precursors), 'target': query})
-      results.append(steps['properties']['steps']['items'])
+      results.append(steps['steps'])
     return results
 
 
