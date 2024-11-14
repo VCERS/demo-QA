@@ -9,10 +9,10 @@ import config
 FLAGS = flags.FLAGS
 
 def add_options():
-  flags.DEFINE_enum('model', default = 'qwen2', enum_values = {'llama3', 'qwen2'}, help = 'model to use')
+  flags.DEFINE_string('host', default = 'http://localhost:8080/generate', help = 'url to TGI')
 
 def create_interface():
-  agent = Agent(model = FLAGS.model)
+  agent = Agent(model = FLAGS.host)
   def chatbot_response(user_input, history):
     response = agent.query(user_input)
     history.append((user_input, response['output']))
