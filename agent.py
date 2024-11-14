@@ -21,9 +21,9 @@ class Agent(object):
              load_ox_potential_predictor(),
              load_synthesis_steps_predictor(tokenizer, llm)]
     prompt = agent_template(tokenizer)
-    prompt.partial_variables = {
-      "tools": render_text_description(tools), 
-      "tool_names": ", ".join([t.name for t in tools])
+    prompt = prompt.partial(
+      tools = render_text_description(tools), 
+      tool_names = ", ".join([t.name for t in tools])
     }
     llm = llm.bind(stop = ["<|eot_id|>"])
     chain = {
