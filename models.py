@@ -3,7 +3,7 @@
 import requests
 from langchain.llms.base import LLM
 from langchain_community.llms import HuggingFaceEndpoint
-'''
+
 class Qwen2(LLM):
   url: str = None
   headers: dict = None
@@ -23,13 +23,5 @@ class Qwen2(LLM):
   @property
   def _llm_type(self):
     return "tgi"
-'''
-def Qwen2(*args,**kwargs):
-  return HuggingFaceEndpoint(
-    endpoint_url = "Qwen/Qwen2.5-7B-Instruct",
-    task = "text-generation",
-    do_sample = False,
-    top_p = 0.9,
-    temperature = 0.6
-  )
+    
 
