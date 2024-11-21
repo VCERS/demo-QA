@@ -19,6 +19,7 @@ def create_interface():
     for human, ai in history:
       chat_history.append(HumanMessage(content = human))
       chat_history.append(AIMessage(content = ai))
+    chat_history = chat_history[:-config.max_history_len * 2]
     response = agent.query(user_input, chat_history)
     history.append((user_input, response['output']))
     return "", history, history
