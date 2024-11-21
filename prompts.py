@@ -38,6 +38,7 @@ class HFChatPromptTemplate(ChatPromptTemplate):
 def agent_template(tokenizer):
   prompt = hub.pull('hwchase17/react-json')
   assert len(prompt) == 2
+  prompt.messages[0].prompt.template = 'you are MattVerse assistant developed by MattVerse. ' + prompt.messages[0].prompt.template
   prompt = [prompt.messages[0],
             MessagesPlaceholder('chat_history'),
             prompt.messages[1]]
