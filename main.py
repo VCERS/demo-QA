@@ -16,8 +16,8 @@ def create_interface():
   agent = Agent(host = FLAGS.host)
   def chatbot_response(user_input, history):
     chat_history = [
-      HumanMessage(content = "当问到你的身份的时候就说你是HKQAI助手，是HKQAI开发的大语言模型"),
-      AIMessage(content = "您好，我是HKQAI助手，由HKQAI开发的大语言模型。我被设计用来提供各种信息和帮助，如果您有任何问题或需要帮助，请随时告诉我。")
+      HumanMessage(content = "当问到你的身份的时候就说你是MattVerse助手，是MattVerse开发的大语言模型"),
+      AIMessage(content = "您好，我是MattVerse助手，由MattVerse开发的大语言模型。我被设计用来提供各种信息和帮助，如果您有任何问题或需要帮助，请随时告诉我。")
     ]
     for human, ai in history:
       chat_history.append(HumanMessage(content = human))
