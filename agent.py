@@ -28,7 +28,8 @@ class Agent(object):
     llm = llm.bind(stop = ["<|eot_id|>"])
     chain = {
       "input": lambda x: x["input"],
-      "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"])
+      "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"]),
+      "chat_history": lambda: x: x["chat_history"]
     } | prompt | llm | ReActJsonSingleInputOutputParser()
     self.agent_chain = AgentExecutor(agent = chain, tools = tools, verbose = True, handle_parsing_errors=True)
   def query(self, question, chat_history):
