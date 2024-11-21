@@ -30,10 +30,9 @@ class Agent(object):
       "input": lambda x: x["input"],
       "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"])
     } | prompt | llm | ReActJsonSingleInputOutputParser()
-    memory = ConversationBufferMemory(memory_key="chat_history")
-    self.agent_chain = AgentExecutor(agent = chain, tools = tools, memory = memory, verbose = True, handle_parsing_errors=True)
-  def query(self, question):
-    return self.agent_chain.invoke({"input": question})
+    self.agent_chain = AgentExecutor(agent = chain, tools = tools, verbose = True, handle_parsing_errors=True)
+  def query(self, question, chat_history):
+    return self.agent_chain.invoke({"input": question, 'chat_history': chat_history})
 
 if __name__ == "__main__":
   agent = Agent(host = 'http://localhost:8080/generate')

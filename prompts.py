@@ -37,6 +37,10 @@ class HFChatPromptTemplate(ChatPromptTemplate):
 
 def agent_template(tokenizer):
   prompt = hub.pull('hwchase17/react-json')
+  assert len(prompt) == 2
+  prompt = [prompt.messages[0],
+            MessagesPlaceholder('chat_history'),
+            prompt.messages[1]]
   prompt = HFChatPromptTemplate(prompt.messages, tokenizer = tokenizer)
   return prompt
 
