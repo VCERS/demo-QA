@@ -41,6 +41,6 @@ def agent_template(tokenizer):
   prompt = [prompt.messages[0],
             MessagesPlaceholder('chat_history'),
             prompt.messages[1]]
-  prompt = HFChatPromptTemplate(prompt.messages, tokenizer = tokenizer)
+  prompt = HFChatPromptTemplate(prompt, tokenizer = tokenizer)
   return prompt
 
