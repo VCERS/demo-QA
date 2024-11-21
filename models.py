@@ -30,8 +30,6 @@ def Qwen2(*args,**kwargs):
     task = "text-generation",
     do_sample = False,
     top_p = 0.9,
-    temperature = 0.6,
-    trust_remote_code = True,
-    use_cache = True
+    temperature = 0.6
   )
 
