@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 
-from os import environ
-from langchain.memory import ConversationBufferMemory
-from langchain.agents import AgentExecutor, load_tools
+from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
+from langchain.agents import AgentExecutor
+from langchain_community.agent_toolkits.load_tools import load_tools
 from langchain.agents.format_scratchpad import format_log_to_str
 from langchain.agents.output_parsers import ReActJsonSingleInputOutputParser
 from models import Llama3, Qwen2
 from prompts import agent_template
 from tools import load_precursor_predictor, load_ox_potential_predictor, load_synthesis_steps_predictor
-import config
+
 
 class Agent(object):
   def __init__(self, model = 'llama3', tools = ['google-serper', 'llm-math', 'wikipedia', 'arxiv']):
@@ -24,7 +24,8 @@ class Agent(object):
     prompt = agent_template(tokenizer, tools)
     llm = llm.bind(stop = ["<|eot_id|>"])
     chain = {"input": lambda x: x["input"], "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"])} | prompt | llm | ReActJsonSingleInputOutputParser()
-    memory = ConversationBufferMemory(memory_key="chat_history")
+    # memory = ConversationBufferMemory(memory_key="chat_history")
+    memory = ConversationBufferWindowMemory(memory_key="chat_history", return_messages=True)
     self.agent_chain = AgentExecutor(agent = chain, tools = tools, memory = memory, verbose = True, handle_parsing_errors=True)
   def query(self, question):
     return self.agent_chain.invoke({"input": question})

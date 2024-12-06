@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 
-from langchain import hub
 from langchain_core.output_parsers import JsonOutputParser
-from langchain_core.pydantic_v1 import BaseModel, Field, create_model
-from langchain.tools.render import render_text_description
+# from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 from langchain_core.prompts.prompt import PromptTemplate
 
 def exp_instruction_prompt(tokenizer):

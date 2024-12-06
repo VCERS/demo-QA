@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import time
 from absl import flags, app
 import gradio as gr
 from agent import Agent
@@ -25,11 +24,10 @@ def create_interface():
     with gr.Row():
       with gr.Column(scale = 4):
         chatbot = gr.Chatbot(height = 450, show_copy_button = True)
-        user_input = gr.Textbox(label = '需要问什么？')
+        user_input = gr.Textbox(label = 'What is your question？')
         with gr.Row():
-          submit_btn = gr.Button("发送")
-        with gr.Row():
-          clear_btn = gr.ClearButton(components = [chatbot, state], value = "清空问题")
+          clear_btn = gr.ClearButton(components = [chatbot, state], value = "Clear Chat")
+          submit_btn = gr.Button("Send")
       submit_btn.click(chatbot_response,
                        inputs = [user_input, state],
                        outputs = [user_input, state, chatbot])
@@ -37,8 +35,7 @@ def create_interface():
 
 def main(unused_argv):
   demo = create_interface()
-  demo.launch(server_name = config.service_host,
-              server_port = config.service_port)
+  demo.launch(server_name = config.service_host, server_port = config.service_port)
 
 if __name__ == "__main__":
   add_options()

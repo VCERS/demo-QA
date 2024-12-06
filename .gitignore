@@ -1,0 +1,5 @@
+__pycache__/*
+tools/__pycache__/*
+tools/oxidation_potential/__pycache__/*
+tools/reaction_path/__pycache__/*
+tools/electrolyte_synthesis/__pycache__/*

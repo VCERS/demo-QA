@@ -30,7 +30,7 @@ class PrecursorsRecommendation(object):
     model_dir = join(expanduser('~'), '.react_path', 'reaction_path_ckpt')
     data_dir = join(expanduser('~'), '.react_path', 'rsc')
     # 1) load model
-    ckpt = load(join(model_dir, 'model.pth'), map_location = torch.device(device))
+    ckpt = load(join(model_dir, 'model.pth'), map_location = torch.device(device), weights_only=False)
     self.tar_labels = ckpt['tar_labels']
     self.max_mats_num = ckpt['max_mats_num']
     self.num_reserved_ids = ckpt['num_reserved_ids']
