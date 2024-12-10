@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from pydantic import BaseModel, Field
-from typing import Optional, Type, List, Dict, Union, Any
-from langchain.tools import BaseTool, StructuredTool, Tool, tool
-from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
+from typing import Optional, Type, List
+from langchain.tools import StructuredTool, tool
+from langchain.callbacks.manager import CallbackManagerForToolRun
 from .electrolyte_synthesis import SynthesisSteps
 
 def load_synthesis_steps_predictor(tokenizer, llm):

@@ -9,12 +9,12 @@ from torch_geometric.data import Data, Batch
 from .models import Predictor
 
 class OxPredictor(object):
-  def __init__(self, device = 'cpu'):
+  def __init__(self, device = 'cuda'):
     assert device in {'cpu', 'cuda'}
     self.predictor = Predictor()
     script_path = abspath(__file__)
     script_dir = dirname(script_path)
-    ckpt = load(join(script_dir, 'ckpt', 'model.pth'), map_location = torch.device('cpu'))['state_dict']
+    ckpt = load(join(script_dir, 'ckpt', 'model.pth'), map_location = torch.device('cpu'), weights_only=False)['state_dict']
     ckpt = {(k if not k.startswith('module.') else k.replace('module.','')): v for k, v in ckpt.items()}
     self.predictor.load_state_dict(ckpt)
     self.predictor.eval().to(device)

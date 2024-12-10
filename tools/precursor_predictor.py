@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from pydantic import BaseModel, Field
-from typing import Optional, Type, List, Dict, Union, Any
-from langchain.tools import BaseTool, StructuredTool, Tool, tool
-from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
+from typing import Optional, Type
+from langchain.tools import StructuredTool, tool
+from langchain.callbacks.manager import CallbackManagerForToolRun
 from .reaction_path import PrecursorsRecommendation
 
 def load_precursor_predictor():
@@ -31,9 +31,7 @@ def load_precursor_predictor():
       return ExampleOutput(**all_predicts[0])
 
   recommend = PrecursorsRecommendation()
-  return PrecursorPredictorTool(config = PrecursorPredictorConfig(
-    recommend = recommend
-  ))
+  return PrecursorPredictorTool(config = PrecursorPredictorConfig(recommend = recommend))
 
 if __name__ == "__main__":
   tool = load_precursor_predictor()

@@ -11,11 +11,14 @@ def add_options():
   flags.DEFINE_enum('model', default = 'qwen2', enum_values = {'llama3', 'qwen2'}, help = 'model to use')
 
 def create_interface():
+  # Agent automatically loads the model and a sutiable tool
   agent = Agent(model = FLAGS.model)
+
   def chatbot_response(user_input, history):
     response = agent.query(user_input)
     history.append((user_input, response['output']))
     return "", history, history
+  
   with gr.Blocks() as demo:
     state = gr.State([])
     with gr.Row(equal_height = True):

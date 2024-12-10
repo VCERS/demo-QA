@@ -2,7 +2,6 @@
 
 import torch
 from torch import device
-from huggingface_hub import login
 from transformers import AutoTokenizer, AutoModelForCausalLM, LogitsProcessorList, \
                 TemperatureLogitsWarper, TopKLogitsWarper, TopPLogitsWarper
 from langchain.llms.base import LLM
@@ -11,7 +10,7 @@ from langchain.llms.base import LLM
 # Check if GPU is available
 
 if torch.cuda.is_available():
-  dev = "cuda:0" 
+  dev = "cuda" 
 else:
   dev ="cpu"
 
