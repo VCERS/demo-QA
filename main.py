@@ -1,14 +1,28 @@
 #!/usr/bin/python3
-
+import os
 from absl import flags, app
 import gradio as gr
 from agent import Agent
-import config
+import configparser
+config = configparser.ConfigParser()
+config.read('config.ini')
+os.environ['HF_HOME'] = config.get('General', 'huggingface')
+os.environ["CUDA_VISIBLE_DEVICES"] = config.get('General', 'device')
+
+huggingface_token = config.get('General', 'huggingface_token')
+LANGCHAIN_key = config.get('General', 'LANGCHAIN_key')
+
+service_host = "0.0.0.0"
+service_port = 19214
+
+import os
+os.environ["LANGCHAIN_API_KEY"] = LANGCHAIN_key
+
 
 FLAGS = flags.FLAGS
 
 def add_options():
-  flags.DEFINE_enum('model', default = 'qwen2', enum_values = {'llama3', 'qwen2'}, help = 'model to use')
+  flags.DEFINE_enum('model', default = 'llama3', enum_values = {'llama3', 'qwen2', 'NV_llama'}, help = 'model to use')
 
 def create_interface():
   # Agent automatically loads the model and a sutiable tool
@@ -18,7 +32,8 @@ def create_interface():
     response = agent.query(user_input)
     history.append((user_input, response['output']))
     return "", history, history
-  
+  def clear_chatbot_memory():
+      agent.clear()
   with gr.Blocks() as demo:
     state = gr.State([])
     with gr.Row(equal_height = True):
@@ -31,14 +46,23 @@ def create_interface():
         with gr.Row():
           clear_btn = gr.ClearButton(components = [chatbot, state], value = "Clear Chat")
           submit_btn = gr.Button("Send")
+      user_input.submit(chatbot_response,
+                       inputs = [user_input, state],
+                       outputs = [user_input, state, chatbot])
       submit_btn.click(chatbot_response,
                        inputs = [user_input, state],
                        outputs = [user_input, state, chatbot])
+      clear_btn.click(clear_chatbot_memory)
+      clear_btn.click(
+          lambda _: gr.State([]),
+          [state],
+          [state],
+      )
   return demo
 
 def main(unused_argv):
   demo = create_interface()
-  demo.launch(server_name = config.service_host, server_port = config.service_port)
+  demo.launch(server_name = service_host, server_port = service_port, share=True)
 
 if __name__ == "__main__":
   add_options()
