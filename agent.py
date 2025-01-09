@@ -30,14 +30,16 @@ def agent_template(tokenizer, tools):
 
 
 class Agent(object):
-  def __init__(self, model = 'llama3', tools = ['google-serper', 'llm-math', 'wikipedia', 'arxiv']):
+  def __init__(self, model = 'llama3', tools = ['google-serper', 'llm-math', 'wikipedia', 'arxiv'], is_neo = False):
     llms_types = {
       'llama3': Llama3,
       'qwen2': Qwen2,
       'NV_llama': Nvidia_llama,
     }
     tokenizer, llm = llms_types[model](True)
-    self.tools = load_tools(tools, llm = llm, serper_api_key = 'd075ad1b698043747f232ec1f00f18ee0e7e8663') + [load_kg_search_neo(tokenizer, llm)]
+    self.tools = load_tools(tools, llm = llm, serper_api_key = 'd075ad1b698043747f232ec1f00f18ee0e7e8663') + [load_kg_search(tokenizer, llm)]
+    if is_neo:
+        self.tools = load_tools(tools, llm = llm, serper_api_key = 'd075ad1b698043747f232ec1f00f18ee0e7e8663') + [load_kg_search_neo(tokenizer, llm)]
             #[load_precursor_predictor(),
             # load_ox_potential_predictor(),
             # load_synthesis_steps_predictor(tokenizer, llm)]

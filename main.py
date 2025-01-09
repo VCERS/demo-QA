@@ -24,10 +24,15 @@ FLAGS = flags.FLAGS
 
 def add_options():
   flags.DEFINE_enum('model', default = 'llama3', enum_values = {'llama3', 'qwen2', 'NV_llama'}, help = 'model to use')
+  flags.DEFINE_string('is_Neo', default='False', help='if we want to use neo4j based method.')
+  flags.DEFINE_string('service_port', default=config.get('General', 'service_port'), help='port.')
 
 def create_interface():
   # Agent automatically loads the model and a sutiable tool
-  agent = Agent(model = FLAGS.model)
+  if FLAGS.is_Neo == 'True':
+      agent = Agent(model = FLAGS.model, is_neo=True)
+  else:
+      agent = Agent(model = FLAGS.model, is_neo=False)
 
   def chatbot_response(user_input, history):
     response = agent.query(user_input)
@@ -41,7 +46,10 @@ def create_interface():
     state = gr.State([])
     with gr.Row(equal_height = True):
       with gr.Column(scale = 15):
-        gr.Markdown("<h1><center>Electrolyte Agent</center></h1>")
+        if FLAGS.is_Neo == 'True':
+            gr.Markdown("<h1><center>Electrolyte Agent Neo4j Based</center></h1>")
+        else:
+            gr.Markdown("<h1><center>Electrolyte Agent</center></h1>")
     with gr.Row():
       with gr.Column(scale = 4):
         chatbot = gr.Chatbot(height = 450, show_copy_button = True)
@@ -63,7 +71,7 @@ def create_interface():
 
 def main(unused_argv):
   demo = create_interface()
-  demo.launch(server_name = service_host, server_port = service_port, share=True)
+  demo.launch(server_name = service_host, server_port = int(FLAGS.service_port), share=True)
 
 if __name__ == "__main__":
   add_options()
