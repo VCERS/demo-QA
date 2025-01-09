@@ -9,7 +9,7 @@ from langchain import hub
 from langchain.tools.render import render_text_description
 from langchain_core.prompts.prompt import PromptTemplate
 from models import Llama3, Qwen2, Nvidia_llama
-from tools import load_precursor_predictor, load_ox_potential_predictor, load_synthesis_steps_predictor, load_kg_search
+from tools import load_precursor_predictor, load_ox_potential_predictor, load_synthesis_steps_predictor, load_kg_search, load_kg_search_neo
 
 
 
@@ -37,7 +37,7 @@ class Agent(object):
       'NV_llama': Nvidia_llama,
     }
     tokenizer, llm = llms_types[model](True)
-    self.tools = load_tools(tools, llm = llm, serper_api_key = 'd075ad1b698043747f232ec1f00f18ee0e7e8663') + [load_kg_search(tokenizer, llm)]
+    self.tools = load_tools(tools, llm = llm, serper_api_key = 'd075ad1b698043747f232ec1f00f18ee0e7e8663') + [load_kg_search_neo(tokenizer, llm)]
             #[load_precursor_predictor(),
             # load_ox_potential_predictor(),
             # load_synthesis_steps_predictor(tokenizer, llm)]

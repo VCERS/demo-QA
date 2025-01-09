@@ -58,9 +58,8 @@ MATCH (a:ELT {name: $elt_name})
 """, elt_name=name, database_=db)
 
     if records == []:
-        return "No Synthesis path found in data."
-
-    start = start_temp(name, driver)
+        return "No Synthesis Path found"
+    start = start_temp(records, driver, name)
     nodes = records[0][0]
     relations = records[0][1]
     start_node = []
@@ -105,16 +104,16 @@ MATCH (a:ELT {name: $elt_name})
     
     return output
 
-def start_temp(name:str, driver):
-    prc = prc_query(name, driver)
-    ptp = ptp_query(name, driver)
-    dev = dev_query(name, driver)
+def start_temp(records, driver, name:str):
+    prc = prc_query(records, driver)
+    ptp = ptp_query(records, driver)
+    dev = dev_query(records, driver)
 
     prc_list = prc['ceid']
     ptp_list = ptp['ceid']
     dev_list = dev['ceid']
 
-    prcs, ptps, devs = start_temp_query(prc_list, ptp_list, dev_list, name, driver)
+    prcs, ptps, devs = start_temp_query(prc_list, ptp_list, dev_list, records, driver)
 
     prc_temp = ""
     ptp_temp = ""
@@ -148,28 +147,7 @@ def start_temp(name:str, driver):
             {dev_temp}\n"""
     return start
 
-def start_temp_query(prcs, ptps, devs, name:str, driver):
-    records, summary, keys = driver.execute_query(
-        """
-MATCH (a:ELT {name: $elt_name})
-    CALL apoc.path.subgraphAll(a, {
-    relationshipFilter: "Instance_of>|Synthesis_with>|Next_Operation>|Precursor>|Attribute_of<|Device>|Amount_of<|Unit_of|>Condition|Number|Number_of|OperationTarget>|Participant>|REFERENCED_IN>",
-      minLevel: 0,
-      maxLevel: 100
-  })
-    YIELD nodes, relationships
-    MATCH (b:SOP) WHERE b IN nodes WITH b, nodes, relationships, collect(DISTINCT split(b.ceid, " ")[0]) AS ids
-    MATCH (c:NUM) WHERE c IN nodes AND NOT split(c.ceid, " ")[0] in ids WITH collect(c) AS blacklist
-    MATCH (a:ELT {name: $elt_name})
-    CALL apoc.path.subgraphAll(a, {
-    relationshipFilter: "Instance_of>|Synthesis_with>|Next_Operation>|Precursor>|Attribute_of<|Device>|Amount_of<|Unit_of|>Condition|Number|Number_of|OperationTarget>|Participant>|REFERENCED_IN>",
-    minLevel: 0,
-    maxLevel: 100,
-    blacklistNodes: blacklist
-  })
-    YIELD nodes, relationships
-    RETURN nodes, relationships;
-""", elt_name=name, database_=db)
+def start_temp_query(prcs, ptps, devs, records, driver):
     
     nodes = records[0][0]
     new_prcs = []
@@ -178,17 +156,17 @@ MATCH (a:ELT {name: $elt_name})
     for prc in prcs:
         for node in nodes:
             if prc == node['ceid']:
-                new_prcs += [construct_graph(records, node)]
+                new_prcs += [construct_nlp_from_graph(records, node)]
 
     for ptp in ptps:
         for node in nodes:
             if ptp == node['ceid']:
-                new_ptps += [construct_graph(records, node)]
+                new_ptps += [construct_nlp_from_graph(records, node)]
 
     for dev in devs:
         for node in nodes:
             if dev == node['ceid']:
-                new_devs += [construct_graph(records, node)]
+                new_devs += [construct_nlp_from_graph(records, node)]
 
     return new_prcs, new_ptps, new_devs
         
@@ -203,15 +181,15 @@ def graph_to_template(graph, records, start_node):
     ptp = []
     for node in graph:
         if list(node.labels)[0] == 'PRC':
-            prc += [construct_graph(records, node)]
+            prc += [construct_nlp_from_graph(records, node)]
         if list(node.labels)[0] == 'DEV':
-            dev += [construct_graph(records, node)]
+            dev += [construct_nlp_from_graph(records, node)]
         if list(node.labels)[0] == 'CND':
-            cnd += [construct_graph(records, node)]
+            cnd += [construct_nlp_from_graph(records, node)]
         if list(node.labels)[0] == 'OPT':
-            opt += [construct_graph(records, node)]
+            opt += [construct_nlp_from_graph(records, node)]
         if list(node.labels)[0] == 'PTP':
-            ptp += [construct_graph(records, node)]
+            ptp += [construct_nlp_from_graph(records, node)]
 
     prc_temp = "Precursors " + " and ".join(prc) + " are "
     dev_temp = " using " + " and ".join(dev)
@@ -234,7 +212,7 @@ def graph_to_template(graph, records, start_node):
     
     return template
 
-def construct_graph(records, start_node):
+def construct_nlp_from_graph(records, start_node):
     heads_or_tail = None
     relation_type = []
     if 'PRC' in start_node.labels:
@@ -248,7 +226,7 @@ def construct_graph(records, start_node):
     if 'NUT' in start_node.labels:
         return start_node['name']
     if 'CND' in start_node.labels:
-        return construct_graph_cnd(records, start_node)
+        return construct_nlp_from_graph_cnd(records, start_node)
     if 'PTP' in start_node.labels:
         return start_node['name']
     if 'NUM' in start_node.labels:
@@ -269,7 +247,7 @@ def construct_graph(records, start_node):
         if heads_or_tail == 'tail':
             if tail == start_node:
                 if 'NUM' in start_node.labels and relation_type_temp == 'Number' and connect_to_sop(records, head) == False:
-                    return construct_graph_cnd(records, head, special=True)
+                    return construct_nlp_from_graph_cnd(records, head, special=True)
                 elif relation_type_temp in relation_type:
                     list_node += [(relation_type_temp, head)]
            
@@ -278,7 +256,7 @@ def construct_graph(records, start_node):
     if list_node != []:
         for n in list_node:
             relation_type_temp, node_temp = n
-            temp_text += [text_with_type(start_node, relation_type_temp) + construct_graph(records, node_temp)]
+            temp_text += [text_with_type(start_node, relation_type_temp) + construct_nlp_from_graph(records, node_temp)]
     
     return text + " ".join(temp_text)
         
@@ -293,7 +271,7 @@ def text_with_type(node, relation_type_temp):
         return " "
     
 
-def construct_graph_cnd(records, start_node, special=False):
+def construct_nlp_from_graph_cnd(records, start_node, special=False):
     relations = records[0][1]
     conditions = []
     if special:
@@ -328,7 +306,7 @@ def construct_graph_cnd(records, start_node, special=False):
             tail = relation.nodes[1]
             relation_type_temp = relation.type
             if head == start_node:
-                conditions += [construct_graph(records, tail)]
+                conditions += [construct_nlp_from_graph(records, tail)]
         text = start_node['name'] + " " + " and ".join(conditions)
         return text
 
@@ -357,7 +335,7 @@ def special_num(records, start_node):
 
 def main(unused_argv):
     driver = GraphDatabase.driver(host, auth=(user, password))
-    text = graph_query("Li3PS4", driver)
+    text = graph_query("Li10SnP2S12", driver)
     #import pdb; pdb.set_trace()
     print(text)
     

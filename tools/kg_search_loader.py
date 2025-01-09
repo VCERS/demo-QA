@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, Type, List
 from langchain.tools import StructuredTool, tool
 from langchain.callbacks.manager import CallbackManagerForToolRun
-from .kg_search import KGSearch, graph_query
+from .kg_search import KGSearch, graph_query, KGSearchNeo
 from neo4j import GraphDatabase
 
 host = "bolt://103.6.49.76:7687"
@@ -28,7 +28,7 @@ def load_kg_search(tokenizer, llm):
       
   class KGSearchTool(StructuredTool):
     name: str = "Electrolyte synthesis path extractor"
-    description: str = "Extract chemical expression of electrolyte from query if user asked the synthesis path of any electrolyte."
+    description: str = "Extract synthesis path of electrolyte."
     args_schema: Type[BaseModel] = KGSearchInput
     config: KGSearchExtractorConfig
     def _run(self, query: str) -> ELT:
@@ -38,6 +38,28 @@ def load_kg_search(tokenizer, llm):
       return text
 
   extractor = KGSearch(tokenizer, llm)
+  return KGSearchTool(config = KGSearchExtractorConfig(extractor = extractor))
+
+def load_kg_search_neo(tokenizer, llm):
+
+  class KGSearchInput(BaseModel):
+    query: str = Field(description = "User question.")
+      
+  class KGSearchExtractorConfig(BaseModel):
+    class Config:
+      arbitrary_types_allowed = True
+    extractor: KGSearchNeo
+      
+  class KGSearchTool(StructuredTool):
+    name: str = "Electrolyte synthesis path extractor"
+    description: str = "Extract synthesis path of electrolyte."
+    args_schema: Type[BaseModel] = KGSearchInput
+    config: KGSearchExtractorConfig
+    def _run(self, query: str):
+      result = self.config.extractor.extract(query)
+      return result
+
+  extractor = KGSearchNeo(llm)
   return KGSearchTool(config = KGSearchExtractorConfig(extractor = extractor))
 
 if __name__ == "__main__":

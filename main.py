@@ -12,8 +12,9 @@ os.environ["CUDA_VISIBLE_DEVICES"] = config.get('General', 'device')
 huggingface_token = config.get('General', 'huggingface_token')
 LANGCHAIN_key = config.get('General', 'LANGCHAIN_key')
 
-service_host = "0.0.0.0"
-service_port = 19214
+
+service_host = config.get('General', 'service_host')
+service_port = int(config.get('General', 'service_port'))
 
 import os
 os.environ["LANGCHAIN_API_KEY"] = LANGCHAIN_key
@@ -32,6 +33,8 @@ def create_interface():
     response = agent.query(user_input)
     history.append((user_input, response['output']))
     return "", history, history
+  def clear_chatbot_response(user_input, history):
+    return "", []
   def clear_chatbot_memory():
       agent.clear()
   with gr.Blocks() as demo:
@@ -53,11 +56,9 @@ def create_interface():
                        inputs = [user_input, state],
                        outputs = [user_input, state, chatbot])
       clear_btn.click(clear_chatbot_memory)
-      clear_btn.click(
-          lambda _: gr.State([]),
-          [state],
-          [state],
-      )
+      clear_btn.click(clear_chatbot_response,
+                     inputs = [user_input, state],
+                     outputs = [user_input, state])
   return demo
 
 def main(unused_argv):
